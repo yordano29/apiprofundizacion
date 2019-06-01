@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const TipoAtencion = mongoose.model('TipoAtencion');
+const auth = require('../middlewares/auth');
 
 module.exports = (app) => {
   app.use('/', router);
 };
 
 
-router.post('/tipoatencion',(req, res, next) => {
+router.post('/tipoatencion',auth,(req, res, next) => {
     let tipoatencion = new TipoAtencion()
     tipoatencion.descripcion =req.body.descripcion
     tipoatencion.save((err, tipoatencionStored) => {
@@ -19,7 +20,7 @@ router.post('/tipoatencion',(req, res, next) => {
     })
   });
 
-  router.get('/tipoatencion', (req, res, next) => {
+  router.get('/tipoatencion', auth,(req, res, next) => {
     TipoAtencion.find((err, tipoatencion) => {
       if (err) return res.status(500).send({message: 
            'Error al realizar la petición: '+err})
@@ -28,7 +29,7 @@ router.post('/tipoatencion',(req, res, next) => {
     });
   });
 
-  router.get('/tipoatencion/:tipoatencionId', (req, res, next) => {
+  router.get('/tipoatencion/:tipoatencionId', auth,(req, res, next) => {
     let tipoatencionId = req.params.tipoatencionId
     TipoAtencion.findById(tipoatencionId, (err, tipoatencion) => {
       if (err) return res.status(500).send({message: 
@@ -39,7 +40,7 @@ router.post('/tipoatencion',(req, res, next) => {
     })
   });
   
-  router.put('/tipoatencion/:tipoatencionId',(req, res, next) => {
+  router.put('/tipoatencion/:tipoatencionId',auth,(req, res, next) => {
     let tipoatencionId = req.params.tipoatencionId
     
     let tipoatencionUpdate= req.body
@@ -52,7 +53,7 @@ router.post('/tipoatencion',(req, res, next) => {
     })
   });
 
-  router.delete('/tipoatencion/:tipoatencionId',(req, res, next) => {
+  router.delete('/tipoatencion/:tipoatencionId',auth,(req, res, next) => {
     let tipoatencionId = req.params.tipoatencionId    
     TipoAtencion.findByIdAndRemove(tipoatencionId, (err, tipoatencionStored) => {
       if (err) res.status(500).send({message: 

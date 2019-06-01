@@ -2,13 +2,15 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const TipoNivel = mongoose.model('TipoNivel');
+const auth = require('../middlewares/auth');
+
 
 module.exports = (app) => {
   app.use('/', router);
 };
 
 
-router.post('/tiponivel',(req, res, next) => {
+router.post('/tiponivel',auth,(req, res, next) => {
     let tiponivel = new TipoNivel()
     tiponivel.nivel =req.body.nivel
     tiponivel.descripcion =req.body.descripcion
@@ -20,7 +22,7 @@ router.post('/tiponivel',(req, res, next) => {
     })
   });
 
-  router.get('/tiponivel', (req, res, next) => {
+  router.get('/tiponivel', auth,(req, res, next) => {
     TipoNivel.find((err, tiponivel) => {
       if (err) return res.status(500).send({message: 
            'Error al realizar la petición: '+err})
@@ -29,7 +31,7 @@ router.post('/tiponivel',(req, res, next) => {
     });
   });
 
-  router.get('/tiponivel/:tiponivelId', (req, res, next) => {
+  router.get('/tiponivel/:tiponivelId', auth,(req, res, next) => {
     let tiponivelId = req.params.tiponivelId
     TipoNivel.findById(tiponivelId, (err, tiponivel) => {
       if (err) return res.status(500).send({message: 
@@ -40,7 +42,7 @@ router.post('/tiponivel',(req, res, next) => {
     })
   });
   
-  router.put('/tiponivel/:tiponivelId',(req, res, next) => {
+  router.put('/tiponivel/:tiponivelId',auth,(req, res, next) => {
     let tiponivelId = req.params.tiponivelId
     
     let tiponivelUpdate= req.body
@@ -53,7 +55,7 @@ router.post('/tiponivel',(req, res, next) => {
     })
   });
 
-  router.delete('/tiponivel/:tiponivelId',(req, res, next) => {
+  router.delete('/tiponivel/:tiponivelId',auth,(req, res, next) => {
     let tiponivelId = req.params.tiponivelId    
     TipoNivel.findByIdAndRemove(tiponivelId, (err, tiponivelStored) => {
       if (err) res.status(500).send({message: 

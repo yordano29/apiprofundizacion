@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Eps = mongoose.model('Eps');
+const auth = require('../middlewares/auth');
 
 module.exports = (app) => {
   app.use('/', router);
 };
 
 
-router.post('/eps',(req, res, next) => {
+router.post('/eps',auth,(req, res, next) => {
     let eps = new Eps()
     eps.nombre =req.body.nombre
     eps.categoria =req.body.categoria
@@ -20,7 +21,7 @@ router.post('/eps',(req, res, next) => {
     })
   });
 
-  router.get('/eps', (req, res, next) => {
+  router.get('/eps', auth,(req, res, next) => {
     Eps.find((err, eps) => {
       if (err) return res.status(500).send({message: 
            'Error al realizar la petición: '+err})
@@ -29,7 +30,7 @@ router.post('/eps',(req, res, next) => {
     });
   });
 
-  router.get('/eps/:epsId', (req, res, next) => {
+  router.get('/eps/:epsId', auth,(req, res, next) => {
     let epsId = req.params.epsId
     Eps.findById(epsId, (err, eps) => {
       if (err) return res.status(500).send({message: 
@@ -40,7 +41,7 @@ router.post('/eps',(req, res, next) => {
     })
   });
   
-  router.put('/eps/:epsId',(req, res, next) => {
+  router.put('/eps/:epsId',auth,(req, res, next) => {
     let epsId = req.params.epsId
     
     let epsUpdate= req.body
@@ -53,7 +54,7 @@ router.post('/eps',(req, res, next) => {
     })
   });
 
-  router.delete('/eps/:epsId',(req, res, next) => {
+  router.delete('/eps/:epsId',auth,(req, res, next) => {
     let epsId = req.params.epsId    
     Eps.findByIdAndRemove(epsId, (err, epsStored) => {
       if (err) res.status(500).send({message: 
