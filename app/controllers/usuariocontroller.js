@@ -28,7 +28,7 @@ module.exports = (app) => {
   });
 
   
-  router.get('/usuario', auth,(req, res, next) => {
+  router.get('/usuario', (req, res, next) => {
     Usuario.find((err, usuario) => {
       if (err) return res.status(500).send({message: 
            'Error al realizar la petición: '+err})
@@ -79,25 +79,48 @@ module.exports = (app) => {
   });
   
 
-  router.post('/signin',(req, res, next) => {
-    Usuario.findOne({ email: req.body.email }, (err, user) => {
-      if (err) return res.status(500).send({ message: 
-        `Error al ingresar: ${err}` })
-      if (!user) return res.status(404).send({ message: 
-        `No existe el usuario: ${req.body.email}` })
+  // router.post('/signin',(req, res, next) => {
+  //   Usuario.findOne({ email: req.body.email }, (err, user) => {
+  //     if (err) return res.status(500).send({ message: 
+  //       `Error al ingresar: ${err}` })
+  //     if (!user) return res.status(404).send({ message: 
+  //       `No existe el usuario: ${req.body.email}` })
   
-      return user.comparePassword(req.body.password,
-         (err, isMatch) => {
-        if (err) return res.status(500).send(
-          { message: `Error al ingresar: ${err}` })
-        if (!isMatch) return res.status(404).send(
-          { message: `Error de contraseña: ${req.body.email}` })
+  //     return user.comparePassword(req.body.password,
+  //        (err, isMatch) => {
+  //       if (err) return res.status(500).send(
+  //         { message: `Error al ingresar: ${err}` })
+  //       if (!isMatch) return res.status(404).send(
+  //         { message: `Error de contraseña: ${req.body.email}` })
   
-        req.user = user
-        return res.status(200).send({ message: 
-          'Te has logueado correctamente', 
-          token: service.createToken(user) })
-      });      
-    }).select('_id email password');
+  //       req.user = user
+  //       return res.status(200).send({ message: 
+  //         'Te has logueado correctamente', 
+  //         token: service.createToken(user) })
+  //     });      
+  //   }).select('_id email password');
   
-    });
+  //   });
+
+    router.post('/signin',(req, res, next) => {
+      Usuario.findOne({ email: req.body.email }, (err, user) => {
+        if (err) return res.send({ message: 
+          `Error al ingresar: ${err}` })
+        if (!user) return res.send({ message: 
+          `No existe el usuario: ${req.body.email}` })
+    
+        return user.comparePassword(req.body.password,
+           (err, isMatch) => {
+          if (err) return res.send(
+            { message: `Error al ingresar: ${err}` })
+          if (!isMatch) return res.send(
+            { message: `Error de contraseña: ${req.body.email}` })
+    
+          req.user = user
+          return res.status(200).send({ message: 
+            'Te has logueado correctamente', 
+            token: service.createToken(user) })
+        });      
+      }).select('_id email password');
+    
+      });
